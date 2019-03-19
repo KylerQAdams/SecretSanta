@@ -4,6 +4,7 @@ using System;
 using System.Net;
 using System.Web.Mvc;
 using SecretSanta.Services;
+using System.Web;
 
 namespace SecretSanta.Controllers
 {
@@ -31,7 +32,7 @@ namespace SecretSanta.Controllers
             }
             catch (Exception e)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, e.Message);
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, HttpUtility.HtmlEncode(e.Message));
             }
         }
 

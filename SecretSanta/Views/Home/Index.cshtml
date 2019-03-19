@@ -1,5 +1,147 @@
 ﻿@{
     ViewBag.Title = "Home Page";
 }
+<!--
+    Only using simple and unoptimized HTML & JQuery to save time.
+    Not the best design by a long shot, but a quick and usable one.
+-->
+<center>
+    <h1>
+        BACKGROUND
+    </h1>
+    <p>
+        Secret Santa is a popular holiday tradition for a gift exchange within a group of people.
+        Each person's name is written on a piece of paper and randomly selected one at a time by every person in the group to determine the recipient of their Secret Santa gift.
+        However, physically drawing names is not always successful, since it is possible that a person could draw their own name or the name of their significant other.
+        This simple web application solves that problem by allowing you to setup groups of people that cannot pick each other.
+    </p>
 
+    <h2>
+        INPUT
+    </h2>
+    <div id="inputDiv">
+        Participants Group: <input name="input" onkeydown="updateUI(this)" /> <br />
     </div>
+    <button onclick="callSecretSantaService()">Click Me Yo'</button>
+</center>
+<br />
+<br />
+<br />
+<table id="results"></table>
+
+<center>
+    <h2>
+        USAGE INSTRUCTIONS
+    </h2>
+    <p>
+        For each group of participants that should not give gifts to each other, write their names seperated by a comma in a text box above.
+
+        For example, if you had the following list of people:
+        <ul style="list-style-type:none;">
+            <li>John Snow</li>
+            <li>Jane Snow</li>
+            <li>Jenny Snow</li>
+            <li>June Tobias</li>
+            <li>Judith Tobias</li>
+            <li>Jeremony Eins</li>
+            <li>Janet</li>
+        </ul>
+        Then your input might look like this:
+        <br />
+        <br />Participants Groups: <input name="sample" disabled="disabled" value="John Snow, Jane Snow, Jenny Snow" /> <br />
+        <br />Participant Groups: <input name="sample" disabled="disabled" value="June Tobias, Judith Tobias" /> <br />
+        <br />Participant Groups: <input name="sample" disabled="disabled" value="Jeremony Eins" /> <br />
+        <br />Participant Groups: <input name="sample" disabled="disabled" value="Janet" /> <br />
+        <br />
+        You can also seperate groups by a semi-colon.  This means you can put everyone's name in the same text box to make copy-pasting easier:
+        <br />
+        <br />Participants Groups: <input name="sample" disabled="disabled" value="John Snow, Jane Snow, Jenny Snow;June Tobias, Judith Tobias;Jeremony Eins;Janet" /> <br />
+    </p>
+</center>
+
+
+<script>
+
+    // Adds extra inputs as the present ones get filled.
+    // Will not bother to remove excess for this sample.
+    function updateUI()
+    {
+        var addNewInput = true;
+        $.each(document.getElementsByName('input'), function (index, input) {
+            if (!input.value) {
+                addNewInput = false;
+                return false;
+            }
+        });
+        if (addNewInput)
+        {
+            var div = $('#inputDiv');
+            div.append("<br/>Participants Group: <input name=\"input\" onkeydown=\"updateUI()\" /><br/>");
+        }
+    };
+
+
+    // Trims text and removes empities in a string array.
+    function cleanArray(array)
+    {
+        var cleanedArray = []
+        $.each(array, function (index, item) {
+            var cleaned = item.trim();
+            if (cleaned !== '')
+                cleanedArray.push(cleaned);
+        });
+        return cleanedArray;
+    };
+
+
+    // Retrieves the secret santa groups from inputs.
+    function retrieveSantaGroups() {
+        var secretSantaGroups = new Array();
+
+        $.each(document.getElementsByName('input'), function (index, input) {
+            if (input.value) {
+                var groups = cleanArray(input.value.split(";"));
+                $.each(groups, function (index, group) {
+                    var names = cleanArray(group.split(","));
+                    secretSantaGroups.push({ Names: names });
+                });
+            }
+        });
+        return secretSantaGroups;
+    }
+
+
+    function callSecretSantaService() {
+        var secretSantaGroups = retrieveSantaGroups();
+
+        // Ommitting client side validation for sake of time. Server side input validation should be fine.
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("GetSantasList")',
+            data: JSON.stringify({ groups: secretSantaGroups }),
+            dataType: "json",
+            contentType: 'application/json',
+            success: constructResults,
+            error: function (error)
+            {
+                var errorMessage = error.statusText;
+                var rows = '<tr><th style=\"background-color:#B22222\">ERROR: ' + error.statusText+'</th></tr>';
+                $('#results').html(rows);
+            }
+        });
+
+    };
+
+    // Will just rebuild the results table with result for sake of time
+    function constructResults(results) {
+        var rows = '<tr><th>Giver</t><th>Recipient</th></tr>';
+        $.each(results, function (index, pair) {
+            rows += '<tr><td>' + pair.Giver + '</td><td>' + pair.Recipient + '</td></tr>';
+        });
+        $('#results').html(rows);
+
+    };
+</script>
+
+
