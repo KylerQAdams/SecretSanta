@@ -13,7 +13,7 @@ namespace SecretSanta.Tests.Controllers
     public class HomeControllerTest
     {
         [TestMethod]
-        public void Index()
+        public void IndexTest()
         {
             // Arrange
             HomeController controller = new HomeController();
@@ -25,4 +25,6 @@ namespace SecretSanta.Tests.Controllers
             Assert.IsNotNull(result);
         }
     }
+
+
 }
