@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SecretSanta.Extensions
 {
@@ -10,9 +11,9 @@ namespace SecretSanta.Extensions
         /// <summary>
         /// Trims all strings and returns all strings with a value.
         /// </summary>
-        public static IEnumerable<String> TrimAndRemoveEmpities(this IEnumerable<String> ienumerable)
+        public static IEnumerable<String> TrimAndRemoveEmpities(this IEnumerable<String> enumerable)
         {
-            foreach(String original in ienumerable)
+            foreach(String original in enumerable)
             {
                 String newString = original?.Trim();
                 if (!String.IsNullOrEmpty(newString))
@@ -29,6 +30,19 @@ namespace SecretSanta.Extensions
                 return default(T);
             var i = Random.Next(0, list.Count);
             return list[i];
+        }
+
+        /// <summary>
+        /// Determines whether the list is all unique or there are duplications.
+        /// </summary>
+        public static (bool AreUnique, T Duplicant) AreAllUnique<T>(this IEnumerable<T> enumerable)
+        {
+            var set = new HashSet<T>();
+            foreach (var item in enumerable)
+                if (!set.Add(item))
+                    return (AreUnique: false, Duplicant: item);
+
+            return (AreUnique: true, Duplicant: default(T));
         }
     }
 }

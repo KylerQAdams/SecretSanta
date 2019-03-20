@@ -63,7 +63,7 @@
 <script>
 
     // Adds extra inputs as the present ones get filled.
-    // Will not bother to remove excess for this sample.
+    // Will not bother to remove excess.
     function updateUI()
     {
         var addNewInput = true;
@@ -82,6 +82,7 @@
 
 
     // Trims text and removes empities in a string array.
+    // Not really needed since this is also done server-side, but may as well.
     function cleanArray(array)
     {
         var cleanedArray = []

@@ -17,7 +17,7 @@ namespace SecretSanta.Controllers
 
         /// <summary>
         /// Assigns gift recipients to each named participant while not allowing
-        /// participants to match to others in their same group.
+        /// participants to match to other participants that are in the same group.
         /// </summary>
         /// <param name="groups">Array of groups that contain the participant names</param>
         /// <returns>Array of paired string values for Giver and Recipient in JSON</returns>
@@ -27,7 +27,7 @@ namespace SecretSanta.Controllers
             try
             {
                 ISantaService service = SantaService.CreateService();
-                var result = service.GenerateGiverRecipients(groups);
+                var result = service.CreateSantaList(groups);
                 return Json(result);
             }
             catch (Exception e)

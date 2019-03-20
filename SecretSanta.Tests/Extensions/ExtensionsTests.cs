@@ -48,5 +48,27 @@ namespace SecretSanta.Extensions.Tests
                 Assert.IsTrue(list.Contains(value));
             }
         }
+
+        [TestMethod()]
+        public void AreAllUniqueTest()
+        {
+            var list = new List<String>()
+            {
+                "One", "Two", "Three", "Four"
+            };
+
+            var (AreUnique, Duplicant) = list.AreAllUnique();
+            Assert.IsTrue(AreUnique);
+            Assert.IsNull(Duplicant);
+
+            list = new List<String>()
+            {
+                "One", "Two", "One", "Four"
+            };
+            (AreUnique, Duplicant) = list.AreAllUnique();
+            Assert.IsFalse(AreUnique);
+            Assert.AreEqual(Duplicant, "One");
+        }
+
     }
 }

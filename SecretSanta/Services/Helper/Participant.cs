@@ -3,9 +3,6 @@
 namespace SecretSanta.Services
 {
 
-    /// <summary>
-    /// This is a helper class used only in the service layer.
-    /// </summary>
     public class Participant
     {
         private Participant _recipient;
@@ -16,7 +13,7 @@ namespace SecretSanta.Services
         /// </summary>
         public int GroupID { get; set; }
         /// <summary> 
-        /// Name of the Participant 
+        /// Name of the Participant.
         /// </summary>
         public String Name { get; set; }
         /// <summary> 

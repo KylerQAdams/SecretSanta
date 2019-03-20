@@ -13,12 +13,9 @@ namespace SecretSanta.Services
     /// </summary>
     public class SantaService : ISantaService
     {
-        /// <summary>Maximum number of participants allowed to process at one time.</summary>
-        /// <remarks>
-        /// A maximum is used for two reasons:
-        /// 1) Because everything is stored and operated on in memory, extremely large values can give OutOfMemory exceptions depending on hardware.
-        /// 2) Large amounts of data can also take awhile to process.  Solve solution could be optimized/improved but was not for the sake of time.
-        /// </remarks>
+        /// <summary>
+        /// Maximum number of participants allowed to process at one time.
+        /// </summary>
         public static readonly int MAX_INPUT_AMOUNT = Int32.Parse(System.Configuration.ConfigurationManager.AppSettings["MaxParticipants"]);
 
 
@@ -42,24 +39,33 @@ namespace SecretSanta.Services
 
         #region Participant matching
         /// <summary>
-        /// Validates input and sets up data to call <see cref="ExecuteListGeneration(IList{Participant})"/> for output.
-        /// Returns matched Giver/Recipient pairs for every individual.
+        /// Returns a list of <seealso cref="SantaResult"/>s for every provided participant,
+        /// making sure no participant is matched to another within its own group.
         /// </summary>
-        public List<SantaResult> GenerateGiverRecipients(GroupOfParticipants[] groups)
+        /// <exception cref="ArgumentException">Input is unable to generate a list.</exception>
+        public List<SantaResult> CreateSantaList(GroupOfParticipants[] groups)
         {
-            // Validation (1/2)
+            var participants = ValidateAndSetup(groups);
+            return GenerateList(participants);
+        }
+
+
+        /// <summary>
+        /// Validates input and returns a flat, ordered, list of participants for later proccessing.
+        /// </summary>
+        /// <exception cref="ArgumentException">Input is unable to generate a list.</exception>
+        public List<Participant> ValidateAndSetup(GroupOfParticipants[] groups)
+        {
             if (groups == null || groups.Length <= 1)
                 throw new ArgumentException("There are not enough people to generate a Secret Santa List.");
 
+
             #region Setup
-            // Remove empities, null, and trim.
             foreach (var g in groups)
                 g.Names = g.Names.TrimAndRemoveEmpities().ToArray();
-
-            // Orders by group size
             var orderedGroups = groups.OrderByDescending(g => g.Names.Length).ToArray();
-            
-            // Flattens into one list and assigns group numbers for easier manipulation
+
+            // flatten and rip into new object.
             var participants = new List<Participant>();
             for (int i = 0; i < orderedGroups.Length; i++)
             {
@@ -70,7 +76,7 @@ namespace SecretSanta.Services
             }
             #endregion
 
-            // Validation (2/2)
+
             if (participants.Count <= 1)
                 throw new ArgumentException("There are not enough people to generate a Secret Santa List.");
 
@@ -80,32 +86,40 @@ namespace SecretSanta.Services
             if (orderedGroups[0].Names.Length * 2 > participants.Count)
                 throw new ArgumentException($"The biggest group is more than half the size of the total people.  Please adjust the groups or add more people.");
 
-            var uniqueTest = new HashSet<String>();
-            foreach (var p in participants)
-                if (!uniqueTest.Add(p.Name))
-                    throw new ArgumentException($"Duplicate participants with the name \"{p.Name}\" detected.  Please make the names unique to avoid confusion.");
+            var (AreUnique, Duplicant) = participants.Select(p => p.Name).AreAllUnique();
+            if (!AreUnique)
+                throw new ArgumentException($"Duplicant participants with the name [{Duplicant}] detected.  Please make the names unique to avoid confusion.");
 
-            // Execution
-            return ExecuteListGeneration(participants);
+            return participants;
         }
 
+
         /// <summary>
-        /// Assigns each participant a unique recipient not within their group.
+        /// Assigns each participant a random unique recipient not within their group.
         /// </summary>
-        public List<SantaResult> ExecuteListGeneration(List<Participant> participants)
+        public List<SantaResult> GenerateList(List<Participant> participants)
         {
-            // If there exists participants without a recipient, go through and attempt to assign an recipient.
+
+            // The assignment method will sometimes steal the assignments of already-assigned participants (by design).
+            // Rather than adding to the call stack and recursively calling AssignParticipants for these individuals,
+            // opted to add the follow while loop & where condition.
             while (participants.Exists(p => p.Recipient == null))
             {
                 foreach(var participant in participants.Where(p => p.Recipient == null))
                     AssignParticipant(participant, participants);
             }
 
+
+            // Names are HtmlEncoded since they are displayed directly in the UI.
             var returnValue = new List<SantaResult>();
             foreach (var participant in participants)
-                returnValue.Add( new SantaResult() { Giver = HttpUtility.HtmlEncode(participant.Name),
-                                                     Recipient = HttpUtility.HtmlEncode(participant.Recipient.Name)
-                                                    });
+            {
+                returnValue.Add(new SantaResult()
+                {
+                    Giver = HttpUtility.HtmlEncode(participant.Name),
+                    Recipient = HttpUtility.HtmlEncode(participant.Recipient.Name)
+                });
+            }
 
             return returnValue;
         }
@@ -113,36 +127,39 @@ namespace SecretSanta.Services
         /// <summary>
         /// Attempts to match the unassigned with a participant who is not receiving a gift and is a valid choice.
         /// On failure, the unassigned steals the recipient from a random participant in another group's recipient.
-        /// This logic could be optimized, but is kept as is for the sake of time.
         /// </summary>
         /// <param name="unassigned"></param>
         /// <param name="participants"></param>
         private void AssignParticipant(Participant unassigned, List<Participant> participants)
         {
-            // Find participants who do not currently have a gift-giver outside the unassigned group.
+            // Find participants who are not currently receiving a gift and are also outside the unassigned group.
             var assignableParticipants = participants.Where(p => p.GroupID != unassigned.GroupID
-                                                      && p.Giver == null).ToList();
+                                                                && p.Giver == null).ToList();
 
+
+            // If at least one exists, randomly select one and done!
             if (assignableParticipants.Count > 0)
             {
                 var recipient = assignableParticipants.GetRandom();
                 unassigned.Recipient = recipient;
             }
-            else
+            else // Otherwise, try and steal from an existing recipient.
             {
-                // Find participants we can steal the recipient from without any further swapping needed.
+                // Best case is if the existing recipient we steal from can be assigned to another recipient without needing to swap again.
                 var swappableParticipants = participants.Where(p => p.GroupID != unassigned.GroupID
-                                                   && p.Recipient != null
-                                                   && p.Recipient.GroupID != unassigned.GroupID
-                                                   && participants.Exists(p2 => p2.GroupID != p.GroupID && p2.Giver == null) )
-                                                  .ToList();
+                                                                    && p.Recipient != null
+                                                                    && p.Recipient.GroupID != unassigned.GroupID
+                                                                    && participants.Exists(p2 => p2.GroupID != p.GroupID && p2.Giver == null) )
+                                                                    .ToList();
 
-                // If none are available, just find any participants we can steal the recipient from.
+                // Worst case is we will likely need to swap again.
                 if (swappableParticipants.Count == 0)
+                {
                     swappableParticipants = participants.Where(p => p.GroupID != unassigned.GroupID
-                                                       && p.Recipient != null
-                                                       && p.Recipient.GroupID != unassigned.GroupID)
-                                                      .ToList();
+                                                                    && p.Recipient != null
+                                                                    && p.Recipient.GroupID != unassigned.GroupID)
+                                                                    .ToList();
+                }
 
                 var victum = swappableParticipants.GetRandom();
                 unassigned.Recipient = victum.Recipient;
