@@ -47,25 +47,23 @@ If the input fails to meet any of the above criteria, an error will be present a
 <h2>Web Interface Usage</h2>
 Navigate to the website.  The default page should pop up.  The default page's partial url is {Website}/Home/Index.
 
-On the website is a portion of the prompt, a textbox, instructions, and samples.
+On the website is a portion of the prompt, a textbox, a button, instructions, and samples.
 
-Entering any text in the textbox via key should spawn other textboxes.  Each textbox represents a group.
+Adding text into a textbox via keystroke will spawn additional textboxes such that there is always an empty textbox.
 
-For all participants of a group, enter the names in one single textbox seperated by a comma.
+Each textbox represents a group.  For all participants of a group, enter that group's participant names in one single textbox seperated by a comma. (e.g. for the family of "John Doe", "Jane Doe" and "John Doe Jr."  the input would like like "John Doe, Jane Doe, John Doe Jr." in one textbox.)
 
 Repeat this for all other groups, using a new textbox for each group.
 
-Alternatively, you may specify a new group is starting by using the semi-colon symbol => ;
+<small>Alternatively, you may specify a new group is starting by using the semi-colon symbol => ;</small>
 
 Once all participants are entered into the various textboxes, click "Generate Secret Santa List".  
 
-If the input is valid, a table with two columns: "Giver" and "Recipient" should appear.
+If the input is valid, a table with two columns: "Giver" and "Recipient" should appear below the button.
 
-If the input is invalid, an error message will appear.  Please fix the input and try again.
+If the input is invalid, an error message will appear below the button.  Please fix the input and try again.
 
-
-Instructions and sample inputs are on bottom of the page.
-
+Additional instructions and sample inputs are present on the page.
 
 
 <h2>REST API Usage</h2>
@@ -84,7 +82,7 @@ Instructions and sample inputs are on bottom of the page.
 {"groups":[{"Names":["John Snow","Jane Snow","Jenny Snow"]},{"Names":["June Tobias","Judith Tobias"]},{"Names":["Jeremony Eins"]},{"Names":["Janet"]}]}
 
 
-<b>Sample JSON Out</b>
+<b>Sample JSON Output</b>
 
 
 [{"Giver":"John Snow","Recipient":"Jeremony Eins"},{"Giver":"Jane Snow","Recipient":"June Tobias"},{"Giver":"Jenny Snow","Recipient":"Janet"},{"Giver":"June Tobias","Recipient":"Jane Snow"},{"Giver":"Judith Tobias","Recipient":"Jenny Snow"},{"Giver":"Jeremony Eins","Recipient":"Judith Tobias"},{"Giver":"Janet","Recipient":"John Snow"}]
@@ -93,7 +91,7 @@ Instructions and sample inputs are on bottom of the page.
 
 
 
-<h2>PROMPT</h2>
+<h2>Original Prompt</h2>
 <b>Secret Santa as a Service</b>
 
 Secret Santa is a popular holiday tradition for a gift exchange within a group of people. Each person's name is written on a piece of paper and randomly selected one at a time by every person in the group to determine the recipient of their Secret Santa gift. However, physically drawing names is not always successful, since it is possible that a person could draw their own name or the name of their significant other.
