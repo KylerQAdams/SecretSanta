@@ -12,12 +12,13 @@
 <b>SETUP</b>
 <ol>
 <li>Download the Repository to Local</li>
-<li>Configure SecretSanta project to run on IIS equivalent 
-  <ul>
-    <li>Right click SecretSanta and select Properties at the bottom</li>
-    <li>Select the Web tab</li>
-    <li>Configure the settings under Servers to be compatible with the executing system</li>
-  </ul></li> 
+<li>Open the SecretSanta.sln solution file.</li>
+<li>Configure SecretSanta project to run on IIS equivalent:
+  <ol>
+    <li>Right click the SecretSanta project in solution explorer and select Properties at the bottom<./li>
+    <li>Select the Web tab.</li>
+    <li>Configure the settings under Servers to be compatible with the executing system.</li>
+  </ol></li> 
 <li>Build the SecretSanta project</li>
 <li>Run or Debug the SecretSanta project</li>
 </ol>
@@ -51,7 +52,7 @@ If the input fails to meet any of the above criteria, an error will be present a
 
 
 <h2>Web Interface Usage</h2>
-When you run or debug the project, a web browser should appear that loads up the website (as configured during Setup Step #2).  The web interface is the default page, with full url of "{Website}/Home/Index".
+When you run or debug the project, a web browser should appear that loads up the website (as configured during Setup Step #3).  The web interface is the default page, with full url of "{Website}/Home/Index".
 
 On the website is a portion of the prompt, a textbox, a button, instructions, and samples.  Adding text into a textbox will spawn additional textboxes such that there is always at least one empty textbox.
 
