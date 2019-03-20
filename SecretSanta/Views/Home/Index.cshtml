@@ -16,11 +16,45 @@
         This simple web application solves that problem by allowing you to setup groups of people that cannot pick each other.
     </p>
 
+    <center>
+        <h2>
+            USAGE INSTRUCTIONS
+        </h2>
+        <p>
+            Every participant is put into a group -- even if the group only contains one participant.
+            Groups are defined as a set of participants who are <b>not</b> suppose to be assigned one another as a gifter/recipient.
+            Write the names of every participant in a single group in a single text box, seperated by a comma.
+            Repeat this for every group.
+            <br /><br />
+            For example, if you had the following list of people:
+            <ul style="list-style-type:none;">
+                <li>John Snow</li>
+                <li>Jane Snow</li>
+                <li>Jenny Snow</li>
+                <li>June Tobias</li>
+                <li>Judith Tobias</li>
+                <li>Jeremony Eins</li>
+                <li>Janet</li>
+            </ul>
+            Then your input might end up looking like this:
+            <br />
+            <br />Participants Groups: <input name="sample" disabled="disabled" value="John Snow, Jane Snow, Jenny Snow" /> <br />
+            <br />Participants Groups: <input name="sample" disabled="disabled" value="June Tobias, Judith Tobias" /> <br />
+            <br />Participants Groups: <input name="sample" disabled="disabled" value="Jeremony Eins" /> <br />
+            <br />Participants Groups: <input name="sample" disabled="disabled" value="Janet" /> <br />
+            <br />
+            As an alternative, you can also denonate the start of a separate groups in a single textbox by using a semi-colon.  For example:
+            <br />
+            <br />Participants Groups: <input name="sample" disabled="disabled" value="John Snow, Jane Snow, Jenny Snow;June Tobias, Judith Tobias;Jeremony Eins;Janet" /> <br />
+        </p>
+    </center>
     <h2>
         INPUT
     </h2>
+    As you type in a textbox, another will be created.  There will always be at least one empty text box.
+    <br />
     <div id="inputDiv">
-        Participants Group: <input name="input" onkeydown="updateUI(this)" /> <br />
+        Participants Group: <input name="input" onkeyup="updateUI()" change="updateUI()" input="updateUI()" /> <br />
     </div>
     <button onclick="callSecretSantaService()">Generate Secret Santa List</button>
 </center>
@@ -28,37 +62,6 @@
 <br />
 <br />
 <table id="results"></table>
-
-<center>
-    <h2>
-        USAGE INSTRUCTIONS
-    </h2>
-    <p>
-        For each group of participants that should not give gifts to each other, write their names seperated by a comma in a text box above.
-
-        For example, if you had the following list of people:
-        <ul style="list-style-type:none;">
-            <li>John Snow</li>
-            <li>Jane Snow</li>
-            <li>Jenny Snow</li>
-            <li>June Tobias</li>
-            <li>Judith Tobias</li>
-            <li>Jeremony Eins</li>
-            <li>Janet</li>
-        </ul>
-        Then your input might look like this:
-        <br />
-        <br />Participants Groups: <input name="sample" disabled="disabled" value="John Snow, Jane Snow, Jenny Snow" /> <br />
-        <br />Participant Groups: <input name="sample" disabled="disabled" value="June Tobias, Judith Tobias" /> <br />
-        <br />Participant Groups: <input name="sample" disabled="disabled" value="Jeremony Eins" /> <br />
-        <br />Participant Groups: <input name="sample" disabled="disabled" value="Janet" /> <br />
-        <br />
-        You can also seperate groups by a semi-colon.  This means you can put everyone's name in the same text box to make copy-pasting easier:
-        <br />
-        <br />Participants Groups: <input name="sample" disabled="disabled" value="John Snow, Jane Snow, Jenny Snow;June Tobias, Judith Tobias;Jeremony Eins;Janet" /> <br />
-    </p>
-</center>
-
 
 <script>
 
@@ -76,7 +79,7 @@
         if (addNewInput)
         {
             var div = $('#inputDiv');
-            div.append("<br/>Participants Group: <input name=\"input\" onkeydown=\"updateUI()\" /><br/>");
+            div.append("<br/>Participants Group: <input name=\"input\" onkeyup=\"updateUI()\" change=\"updateUI()\" input=\"updateUI()\"  /><br/>");
         }
     };
 
@@ -145,5 +148,4 @@
 
     };
 </script>
-
 
