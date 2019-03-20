@@ -11,9 +11,15 @@
 
 <b>SETUP</b>
 <ol>
-<li>Clone the Repository to Local</li>
-<li>Configure SecretSanta project to run on IIS equivalent</li> 
-<li>Build/Debug SecretSanta project</li>
+<li>Download the Repository to Local</li>
+<li>Configure SecretSanta project to run on IIS equivalent 
+  <ul>
+    <li>Right click SecretSanta and select Properties at the bottom</li>
+    <li>Select the Web tab</li>
+    <li>Configure the settings under Servers to be compatible with the executing system</li>
+  </ul></li> 
+<li>Build the SecretSanta project</li>
+<li>Run or Debug the SecretSanta project</li>
 </ol>
 
 <h2>Terms</h2>
@@ -45,23 +51,15 @@ If the input fails to meet any of the above criteria, an error will be present a
 
 
 <h2>Web Interface Usage</h2>
-Navigate to the website.  The default page should pop up.  The default page's partial url is {Website}/Home/Index.
+When you run or debug the project, a web browser should appear that loads up the website (as configured during Setup Step #2).  The web interface is the default page, with full url of "{Website}/Home/Index".
 
-On the website is a portion of the prompt, a textbox, a button, instructions, and samples.
+On the website is a portion of the prompt, a textbox, a button, instructions, and samples.  Adding text into a textbox will spawn additional textboxes such that there is always at least one empty textbox.
 
-Adding text into a textbox via keystroke will spawn additional textboxes such that there is always an empty textbox.
-
-Each textbox represents a group.  For all participants of a group, enter that group's participant names in one single textbox seperated by a comma. (e.g. for the family of "John Doe", "Jane Doe" and "John Doe Jr."  the input would like like "John Doe, Jane Doe, John Doe Jr." in one textbox.)
-
-Repeat this for all other groups, using a new textbox for each group.
+Each textbox represents a group.  For all participants of a group, enter that group's participant names in one single textbox seperated by a comma. (e.g. for the family of "John Doe", "Jane Doe" and "John Doe Jr."  the input would like like "John Doe, Jane Doe, John Doe Jr." in one textbox.)  Repeat this for all other groups, using a new textbox for each group.  All participants should be in a group, even if they are the only participant in that group.
 
 <small>Alternatively, you may specify a new group is starting by using the semi-colon symbol => ;</small>
 
-Once all participants are entered into the various textboxes, click "Generate Secret Santa List".  
-
-If the input is valid, a table with two columns: "Giver" and "Recipient" should appear below the button.
-
-If the input is invalid, an error message will appear below the button.  Please fix the input and try again.
+Once all participants are entered into the various textboxes, click "Generate Secret Santa List".  If the input is valid, a table with two columns: "Giver" and "Recipient" should appear below the button.  If the input is invalid, an error message will appear below the button.  Please fix the input and try again.
 
 Additional instructions and sample inputs are present on the page.
 
