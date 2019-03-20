@@ -22,7 +22,7 @@
     <div id="inputDiv">
         Participants Group: <input name="input" onkeydown="updateUI(this)" /> <br />
     </div>
-    <button onclick="callSecretSantaService()">Click Me Yo'</button>
+    <button onclick="callSecretSantaService()">Generate Secret Santa List</button>
 </center>
 <br />
 <br />
@@ -136,6 +136,7 @@
 
     // Will just rebuild the results table with result for sake of time
     function constructResults(results) {
+
         var rows = '<tr><th>Giver</t><th>Recipient</th></tr>';
         $.each(results, function (index, pair) {
             rows += '<tr><td>' + pair.Giver + '</td><td>' + pair.Recipient + '</td></tr>';

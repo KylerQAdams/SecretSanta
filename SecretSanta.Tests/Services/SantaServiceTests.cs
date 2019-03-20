@@ -79,10 +79,12 @@ namespace SecretSanta.Services.Tests
         {
             var service = SantaService.CreateService() as SantaService;
 
-            var groups = new List<GroupOfParticipants>();
-            groups.Add(new GroupOfParticipants() { Names = new String[] { "One  ", "", null, "  " } });
-            groups.Add(new GroupOfParticipants() { Names = new String[] { "", null, "   " } });
-            groups.Add(new GroupOfParticipants() { Names = new String[] { "", null, "   ", "  Two" } });
+            var groups = new List<GroupOfParticipants>()
+            {
+                new GroupOfParticipants() { Names = new String[] { "One  ", "", null, "  " } },
+                new GroupOfParticipants() { Names = new String[] { "", null, "   " } },
+                new GroupOfParticipants() { Names = new String[] { "", null, "   ", "  Two" } }
+            };
 
             var results = service.ValidateAndSetup(groups.ToArray());
 
